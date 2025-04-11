@@ -1,0 +1,26 @@
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+import requests
+
+app = FastAPI()
+
+# Ruta que obtendrá los datos de la API de partidos en vivo
+@app.get("/live-matches", response_class=HTMLResponse)
+async def get_live_matches():
+    url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+    headers = {
+        "x-rapidapi-key": "132239f6a2mshdb90976390cawcfp19239ejsneb1c3e217797",  # Reemplaza esto con tu clave de API de RapidAPI
+        "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
+    }
+    
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    
+    # Extraemos los partidos en vivo
+    live_matches = data["response"]
+    
+    return live_matches
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=10000)
